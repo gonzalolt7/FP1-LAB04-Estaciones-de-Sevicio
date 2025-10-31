@@ -4,17 +4,19 @@ EstacionSevici = namedtuple("EstacionSevici",
     "nombre, direccion, latitud, longitud, capacidad, puestos_libres, bicicletas_disponibles")
 
 def selecciona_color(estacion:EstacionSevici) -> str:
-    """
-    Devuelve el color en que debe pintarse cada estación según su disponibilidad.
+    if estacion.capacidad==0:
+        return "gray"
+    disponibilidad=estacion.bicicletas_disponibles / estacion.capacidad
+    if disponibilidad==0:
+        return "gray"
+    elif 0<disponibilidad<1/3:
+        return "red"
+    elif disponibilidad<2/3 or disponibilidad==1/3:
+        return "orange"
+    elif disponibilidad>=2/3:
+        return "green"
 
-    Parámetros:
-    estacion: EstacionSevici
 
-    Devuelve:
-    str: "green", "orange", "red" o "gray"
-    """
-    # TODO: Ejercicio 1
-    return "green"
 
 def calcula_estadisticas(estaciones: list[EstacionSevici]) -> tuple[int, int, float, int]:
     """
@@ -24,8 +26,19 @@ def calcula_estadisticas(estaciones: list[EstacionSevici]) -> tuple[int, int, fl
     Devuelve:
     tupla con (total de bicicletas libres, total de capacidad, porcentaje de ocupación, total de estaciones)
     """
-    # TODO: Ejercicio 2
-    return (0, 0, 0.0, 0)
+    bicicletas_libres=0
+    total_capacidad=0
+    total_estaciones=0
+    porcentaje_ocupacion=0
+    for c in estaciones:
+        bicicletas_libres+=c.bicicletas_disponibles
+        total_capacidad+=c.capacidad
+        total_estaciones+=1
+    porcentaje_ocupacion=((total_capacidad-bicicletas_libres)/total_capacidad)*100
+
+    return bicicletas_libres,total_capacidad,porcentaje_ocupacion,total_estaciones
+
+
 
 def busca_estaciones_direccion(estaciones: list[EstacionSevici], direccion_parcial: str) -> list[EstacionSevici]:
     """
@@ -38,8 +51,11 @@ def busca_estaciones_direccion(estaciones: list[EstacionSevici], direccion_parci
     Devuelve:
     lista de EstacionSevici que cumplen el criterio
     """
-    # TODO: Ejercicio 3
-    return []
+    estaciones_parciales=[]
+    for c in estaciones: 
+        if direccion_parcial.lower() in c.direccion.lower():
+            estaciones_parciales.append(c)
+    return estaciones_parciales
 
 def busca_estaciones_con_disponibilidad(estaciones:list[EstacionSevici], min_disponibilidad: float = 0.5) -> list[EstacionSevici]:
     """
@@ -53,8 +69,17 @@ def busca_estaciones_con_disponibilidad(estaciones:list[EstacionSevici], min_dis
     Devuelve:
     lista de EstacionSevici
     """
+    estaciones_disponibilidad=[]
+    for c in estaciones:
+        if c.bicicletas_disponibles==0:
+            return "No hay bicicletas disponibles"
+        if c.bicicletas_disponibles / c.capacidad >= min_disponibilidad:
+            estaciones_disponibilidad.append(c)
+    return estaciones_disponibilidad
+
+
     # TODO: Ejercicio 4
-    return estaciones
+    
 
 def calcula_distancia(p1: tuple[float, float], p2: tuple[float, float]) -> float:
     """
